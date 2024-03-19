@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Work+Sans:wght@300;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='index.css') }}">
+  <link rel="stylesheet" type="text/css" href="../static/index.css">
+  <title>Mãos criativas artesanatos</title>
+</head>
+
+<body>
+  <header>
+    <a class="button" href="/home">Home</a>
+    <a class="button" href="/vendas">Vendas</a>
+    <a class="button" href="/estoque">Estoque</a>
+    <a class="button" href="/artesao">Artesãos</a>
+    <a class="button" href="/relatorio">Relatórios</a>
+  </header>
+  <div class="box_flex">
+    <input type="text" id="myInput1" onkeyup="myFunction()" placeholder="Filtrar por NOME..">
+    <input type="text" id="myInput2" onkeyup="myFunction()" placeholder="Filtrar por ARTESAO..">
+    <input type="text" id="myInput3" onkeyup="myFunction()" placeholder="Filtrar por CATEGORIA..">
+  </div>
+  <a href="/cadastro-produto">Cadastrar produto</a>
+  <p>Produtos</p>
+    <table class="list" id="tabelaProdutos">
+      <thead>
+        <tr>
+          <th>Produto</th>
+          <th>Preço</th>
+          <th>Artesão</th>
+          <th>Categoria</th>
+          <th>Estoque</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for produto in produtos %}
+        <tr class="clickable" onclick="window.location='/produto/{{ produto.id }}';">
+          <td>{{ produto.dados.Nome_produto }}</td>
+          <td><strong>R$ {{ produto.dados.preco }}</strong></td>
+          <td>{{ produto.dados.Artesao.Nome }}</td>
+          <td>{{ produto.dados.categoria.nome_categoria }}</td>
+          <td class="estoque">{{produto.dados.Estoque }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+
+    <script>
+      window.onload = function () {
+        var tabela = document.getElementById("tabelaProdutos");
+        var celulasEstoque = tabela.getElementsByClassName("estoque");
+        for (var i = 0; i < celulasEstoque.length; i++) {
+          var estoque = Number(celulasEstoque[i].innerText);
+          if (estoque < 10) {
+            celulasEstoque[i].style.backgroundColor = "#FF7F7F"; // vermelho claro
+          } else if (estoque >= 10 && estoque <= 20) {
+            celulasEstoque[i].style.backgroundColor = "#FFFF7F"; // amarelo claro
+          } else {
+            celulasEstoque[i].style.backgroundColor = "#7FFF7F"; // verde claro
+          }
+        }
+      };
+      function myFunction() {
+        var input1, input2, input3, filter1, filter2, filter3, table, tr, td1, td2, td3, i;
+        input1 = document.getElementById("myInput1");
+        input2 = document.getElementById("myInput2");
+        input3 = document.getElementById("myInput3");
+        filter1 = input1.value.toUpperCase();
+        filter2 = input2.value.toUpperCase();
+        filter3 = input3.value.toUpperCase();
+        table = document.getElementById("tabelaProdutos");
+        tr = table.getElementsByTagName("tr");
+        for (i = 0; i < tr.length; i++) {
+          td1 = tr[i].getElementsByTagName("td")[0];
+          td2 = tr[i].getElementsByTagName("td")[2];
+          td3 = tr[i].getElementsByTagName("td")[3];
+          if (td1 && td2 && td3) {
+            txtValue1 = td1.textContent || td1.innerText;
+            txtValue2 = td2.textContent || td2.innerText;
+            txtValue3 = td3.textContent || td3.innerText;
+            if (txtValue1.toUpperCase().indexOf(filter1) > -1 && txtValue2.toUpperCase().indexOf(filter2) > -1 && txtValue3.toUpperCase().indexOf(filter3) > -1) {
+              tr[i].style.display = "";
+            } else {
+              tr[i].style.display = "none";
+            }
+          }
+        }
+      }
+    </script>
+</body>
+
+</html>

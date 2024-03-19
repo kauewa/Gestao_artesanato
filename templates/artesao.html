@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Work+Sans:wght@300;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='index.css') }}">
+    <link rel="stylesheet" type="text/css" href="../static/index.css">
+    <title>Mãos criativas artesanatos</title>
+</head>
+<body>
+    <header>
+        <a class="button" href="/home">Home</a>
+        <a class="button" href="/vendas">Vendas</a>
+        <a class="button" href="/estoque">Estoque</a>
+        <a class="button" href="/artesao">Artesãos</a>
+        <a class="button" href="/relatorio">Relatórios</a>
+    </header>
+    <h1>ARTESÃO</h1>
+    <h2>{{ artesao.dados.Nome }}</h2>
+    <p>CPF/CNPJ: {{ artesao.dados.CPF_CNPJ }}</p>
+    <div class="box_flex">
+        <p>Data de nascimento: {{ artesao.dados.dt_nasc }}</p>
+        <p>Email: {{artesao.dados.email}}</p>
+        <p>Telefone: {{artesao.dados.telefone}}</p>
+    </div>
+    <h1>Vendas</h1>
+    <div class="box_flex">
+        <table class="list" id="tabelaProdutos">
+            <thead>
+                <tr>
+                    <th>Data da venda</th>
+                    <th>Cliente</th>
+                    <th>Valor da venda</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for venda in artesao.dados.vendas %}
+                <tr class="clickable" onclick="window.location='/venda/{{ venda.ID }}';">
+                    <td>{{ venda.Data }}</td>
+                    <td>{{ venda.nome_cliente }}</td>
+                    <td><strong>R$ {{ (venda.Valor * venda.parcelas) + venda.primeira_parcela }}</strong></td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+</body>
+</html>

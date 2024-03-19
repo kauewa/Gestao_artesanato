@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Work+Sans:wght@300;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='index.css') }}">
+    <link rel="stylesheet" type="text/css" href="../static/index.css">
+    <title>Mãos criativas artesanatos</title>
+</head>
+
+<body>
+    <header>
+        <a class="button" href="/home">Home</a>
+        <a class="button" href="/vendas">Vendas</a>
+        <a class="button" href="/estoque">Estoque</a>
+        <a class="button" href="/artesao">Artesãos</a>
+        <a class="button" href="/relatorio">Relatórios</a>
+    </header>
+    <main>
+        <h1>Cadastrar Produto</h1>
+        <form method="post" action="{{request.path}}">
+            <div class="box_flex">
+                <div class="box_input">
+                    <label>Nome do produto</label>
+                    <input type="text" name="Nome_produto" id="Nome_produto" />
+                </div>
+                <div class="box_input">
+                    <label>Preço</label>
+                    <input type="text" name="preco" value="0.0" oninput="validateInput(this)" />
+                </div>
+
+            </div>
+            <div class="box_flex">
+                <div class="box_input">
+                    <label>Artesão</label>
+                    <select name="Artesao" id="Artesao">
+                        {% for artesao in artesaos %}
+                        <option value="{{ artesao.ID }}">{{ artesao.Nome }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="box_input">
+                    <label>Estoque</label>
+                    <input type="number" name="Estoque" id="Estoque" />
+                </div>
+
+            </div>
+            <div class="box_flex">
+                <div class="box_input">
+                    <label>Categoria</label>
+                    <select name="categoria" id="categoria">
+                        {% for categoria in categorias %}
+                        <option value="{{ categoria.ID }}">{{ categoria.nome_categoria }}</option>
+                        {% endfor %}
+                    </select>
+                    <button class="btn-small" id="btnNovaCategoria" value="1" name="btnNovaCategoria">+</button>
+                    <div id="modalNovaCategoria" class="modal">
+                        <div class="modal-content">
+                            <label for="nomeCategoria">Nova Categoria</label><br>
+                            <input type="text" id="nomeCategoria" name="nomeCategoria"><br>
+                            <input type="text" id="verificacao" value="0" name="verificacao" />
+                            <button type="submit" id="NovaCategoria" class="btn-small">Adicionar</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="box_input">
+                    <label>Descrição</label>
+                    <input type="text" name="descricao" id="descricao" />
+                </div>
+
+            </div>
+            {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+            {% for category, message in messages %}
+            <div class="alert alert-{{ category }}">
+                {{ message }}
+            </div>
+            {% endfor %}
+            {% endif %}
+            {% endwith %}
+            <button type="submit">Cadastrar</button>
+        </form>
+
+    </main>
+    <script>
+        function validateInput(input) {
+            input.value = input.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');
+        }
+        var modal = document.getElementById("modalNovaCategoria");
+        var btn = document.getElementById("btnNovaCategoria");
+        var verificacao = document.getElementById("verificacao");
+        verificacao.style.display = "none"
+        modal.style.display = "none";
+
+        btn.onclick = function (event) {
+            event.preventDefault();
+            if (modal.style.display === "none" || modal.style.display === "") {
+                modal.style.display = "block";
+                verificacao.value = "1"
+            } else {
+                modal.style.display = "none";
+                verificacao.value = "0"
+            }
+        }
+
+        window.onclick = function (event) {
+            if (event.target == modal) {
+                modal.style.display = "none";
+                verificacao.value = "0"
+            }
+        }
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Work+Sans:wght@300;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='index.css') }}">
+    <link rel="stylesheet" type="text/css" href="../static/index.css">
+    <title>Mãos criativas artesanatos</title>
+</head>
+
+<body>
+    <header>
+        <a class="button" href="/home">Home</a>
+        <a class="button" href="/vendas">Vendas</a>
+        <a class="button" href="/estoque">Estoque</a>
+        <a class="button" href="/artesao">Artesãos</a>
+        <a class="button" href="/relatorio">Relatórios</a>
+    </header>
+    <main>
+        <h1>Cadastrar Venda</h1>
+        <form method="post" action="{{request.path}}">
+            <div class="box_flex">
+                <div class="box_input">
+                    <div class="box_flex">
+                        <div class="box_input">
+                            <label>Produto</label>
+                            <select style="display: none;" id="produto" onchange="updatePrice(this)">
+                                <option value="" selected>Selecione um produto...</option>
+                                {% for produto in produtos %}
+                                <option value="{{ produto.dados.ID }}" data-price="{{ produto.dados.preco }}">{{
+                                    produto.dados.Nome_produto }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="box_input">
+                            <label>Quantidade</label>
+                            <!-- <input type="number" id="quantidade" name="quantidade[]" min="1" value="1"
+                                onchange="updatePrice(this)" /> -->
+                        </div>
+                    </div>
+                    <div id="newProduct" class="newProduct"></div>
+                    <button class="btn-small" id="btnMaisProduto" name="btnMaisProduto"
+                        onclick="addProduct(event)">+</button>
+                </div>
+                <div class="box_input">
+                    <label>Preço Total</label>
+                    <h1 id="precoTotal">0<h1>
+                </div>
+            </div>
+            <div class="box_flex">
+                <div class="box_input">
+                    <label>Artesão</label>
+                    <select name="Artesao" id="Artesao" required>
+                        {% for artesao in artesaos %}
+                        <option value="{{ artesao.dados.ID }}">{{ artesao.dados.Nome }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="box_input">
+                    <label>Cliente</label>
+                    <select name="Cliente" id="Cliente" required>
+                        {% for cliente in clientes %}
+                        <option value="{{ cliente.dados.ID }}">{{ cliente.dados.Nome }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+            </div>
+            <div class="box_flex">
+                <div class="box_input">
+                    <label>Quantidade de parcelas</label>
+                    <select name="qtd_parcelas" id="qtd_parcelas" onchange="updateParcela()" required>
+                        <option value="1" selected>1</option>
+                        <option value="2">2</option>
+                        <option value="3">3</option>
+                        <option value="4">4</option>
+                        <option value="5">5</option>
+                        <option value="6">6</option>
+                        <option value="7">7</option>
+                        <option value="8">8</option>
+                        <option value="9">9</option>
+                        <option value="10">10</option>
+                        <option value="11">11</option>
+                        <option value="12">12</option>
+                    </select>
+                </div>
+                <div class="box_input" id="entradaDiv" style="display: none;">
+                    <label>Valor da Entrada</label>
+                    <input type="text" name="entrada" id="entrada" oninput="validateInput(this)" value="0.0" />
+                </div>
+                <div class="box_input">
+                    <label>Valor da Parcela</label>
+                    <h1 id="valorParcela">0</h1>
+                </div>
+            </div>
+            <div class="box_flex">
+                <div class="box_input">
+                    <label>Forma de pagamento</label>
+                    <select name="forma_pagamento" required>
+                        <option value="Dinheiro">Dinheiro</option>
+                        <option value="Cartao">Cartão</option>
+                        <option value="Pix">Pix</option>
+                    </select>
+                </div>
+            </div>
+            {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+            {% for category, message in messages %}
+            <div class="alert alert-{{ category }}">
+                {{ message }}
+            </div>
+            {% endfor %}
+            {% endif %}
+            {% endwith %}
+            <button type="submit">Cadastrar</button>
+        </form>
+
+    </main>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script>
+        function validateInput(input) {
+            input.value = input.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');
+            updateParcela()
+        }
+        var lastPrice = 0;
+        function updatePrice(element) {
+            var selectElement = element.parentElement.querySelector('select');
+            var quantidadeElement = element.parentElement.querySelector('input');
+
+            var selectedOption = selectElement.options[selectElement.selectedIndex];
+            var price = selectedOption.getAttribute('data-price');
+            var quantidade = quantidadeElement.value;
+
+            if (price) {
+                var precoTotal = document.getElementById('precoTotal');
+                precoTotal.innerText = parseFloat(precoTotal.innerText || 0) - (selectElement.lastPrice || 0) + parseFloat(price) * quantidade;
+
+                selectElement.lastPrice = parseFloat(price) * quantidade;
+            }
+
+            // Atualiza o valor da parcela
+            updateParcela();
+        }
+
+        function updateParcela() {
+            var select = document.getElementById('qtd_parcelas');
+            var qtdParcelas = select.options[select.selectedIndex].value;
+
+            var precoTotal = document.getElementById('precoTotal').innerText;
+            var entrada = document.getElementById('entrada').value || 0;
+            var valorParcela = (parseFloat(precoTotal) - parseFloat(entrada)) / qtdParcelas;
+
+            var valorParcelaElement = document.getElementById('valorParcela');
+            valorParcelaElement.innerText = valorParcela.toFixed(2).toLocaleString('pt-BR');
+
+            // Mostra ou oculta o campo de entrada com base na quantidade de parcelas
+            var entradaDiv = document.getElementById('entradaDiv');
+            if (qtdParcelas >= 2) {
+                entradaDiv.style.display = 'block';
+                document.getElementById('entrada').required = false;
+            } else {
+                entradaDiv.style.display = 'none';
+                document.getElementById('entrada').value = '';
+                document.getElementById('entrada').required = false;
+            }
+        }
+
+        function addProduct(event) {
+            event.preventDefault();
+
+            var newProductDiv = document.getElementById('newProduct');
+            var boxFlex = document.createElement('div');
+            newProductDiv.appendChild(boxFlex);
+
+            var select = document.createElement('select');
+            select.name = 'produto[]';
+            select.required = true
+            select.innerHTML = document.getElementById('produto').innerHTML;
+            select.onchange = function () { updatePrice(this); };
+            boxFlex.appendChild(select);
+
+            var input = document.createElement('input');
+            input.type = 'number';
+            input.name = 'quantidade[]';
+            input.required = true
+            input.min = '1';
+            input.value = '1';
+            input.onchange = function () { updatePrice(this); };
+            boxFlex.appendChild(input);
+
+            // Cria um novo botão de exclusão
+            var deleteButton = document.createElement('button');
+            deleteButton.innerHTML = 'X';
+            deleteButton.className = 'btn-small'
+            deleteButton.onclick = function () {
+                // Remove o select e o botão de exclusão quando o botão de exclusão é clicado
+                newProductDiv.removeChild(boxFlex);
+
+                // Atualiza o preço total
+                var precoTotal = document.getElementById('precoTotal');
+                precoTotal.innerText = parseFloat(precoTotal.innerText || 0) - (select.lastPrice || 0);
+
+                // Atualiza o valor da parcela
+                updateParcela();
+            };
+            boxFlex.appendChild(deleteButton);
+
+            // Aplica o Select2 ao novo elemento select
+            $(select).select2();
+        }
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Work+Sans:wght@300;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='index.css') }}">
+    <link rel="stylesheet" type="text/css" href="../static/index.css">
+    <title>Mãos criativas artesanatos</title>
+</head>
+
+<body>
+    <header>
+        <a class="button" href="/home">Home</a>
+        <a class="button" href="/vendas">Vendas</a>
+        <a class="button" href="/estoque">Estoque</a>
+        <a class="button" href="/artesao">Artesãos</a>
+        <a class="button" href="/relatorio">Relatórios</a>
+    </header>
+    
+    
+    <div class="box_flex">
+        <input type="text" id="myInput1" onkeyup="myFunction()" placeholder="Filtrar por DATA..">
+        <input type="text" id="myInput2" onkeyup="myFunction()" placeholder="Filtrar por CLIENTE..">
+        <input type="text" id="myInput3" onkeyup="myFunction()" placeholder="Filtrar por ARTESAO..">
+    </div>
+    <a href="/cadastro-venda">Cadastrar venda</a>
+    <p>VENDAS</p>
+    <table class="list" id="tabelaProdutos">
+        <thead>
+            <tr>
+                <th>Data da venda</th>
+                <th>Cliente</th>
+                <th>Artesão</th>
+                <th>Valor da venda</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for artesao in artesaos %}
+            {% for venda in artesao.dados.vendas %}
+            <tr class="clickable" onclick="window.location='/venda/{{ venda.ID }}';">
+                <td>{{ venda.Data }}</td>
+                <td>{{ venda.nome_cliente }}</td>
+                <td>{{ artesao.nome }}</td>
+                <td><strong>R$ {{ (venda.Valor * venda.parcelas) + venda.primeira_parcela }}</strong></td>
+            </tr>
+            {% endfor %}
+            {% endfor %}
+        </tbody>
+    </table>
+    
+    <script>
+    function myFunction() {
+      var input1, input2, input3, filter1, filter2, filter3, table, tr, td1, td2, td3, i;
+      input1 = document.getElementById("myInput1");
+      input2 = document.getElementById("myInput2");
+      input3 = document.getElementById("myInput3");
+      filter1 = input1.value.toUpperCase();
+      filter2 = input2.value.toUpperCase();
+      filter3 = input3.value.toUpperCase();
+      table = document.getElementById("tabelaProdutos");
+      tr = table.getElementsByTagName("tr");
+      for (i = 0; i < tr.length; i++) {
+        td1 = tr[i].getElementsByTagName("td")[0];
+        td2 = tr[i].getElementsByTagName("td")[1];
+        td3 = tr[i].getElementsByTagName("td")[2];
+        if (td1 && td2 && td3) {
+          txtValue1 = td1.textContent || td1.innerText;
+          txtValue2 = td2.textContent || td2.innerText;
+          txtValue3 = td3.textContent || td3.innerText;
+          if (txtValue1.toUpperCase().indexOf(filter1) > -1 && txtValue2.toUpperCase().indexOf(filter2) > -1 && txtValue3.toUpperCase().indexOf(filter3) > -1) {
+            tr[i].style.display = "";
+          } else {
+            tr[i].style.display = "none";
+          }
+        }       
+      }
+    }
+    </script>
+</body>
+
+</html>

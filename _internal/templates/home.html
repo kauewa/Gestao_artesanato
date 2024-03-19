@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Work+Sans:wght@300;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='index.css') }}">
+    <link rel="stylesheet" type="text/css" href="../static/index.css">
+    <title>Mãos criativas artesanatos</title>
+</head>
+
+<body>
+    <header>
+        <a class="button" href="/home">Home</a>
+        <a class="button" href="/vendas">Vendas</a>
+        <a class="button" href="/estoque">Estoque</a>
+        <a class="button" href="/artesao">Artesãos</a>
+        <a class="button" href="/relatorio">Relatórios</a>
+    </header>
+    <main>
+        <div class="box_status">
+            <div class="box_flex">
+                <p>vendas do mês:</p>
+                <p class="valor"><strong>R$ {{ valor_total }}</strong></p>
+            </div>
+            <div class="box_flex">
+                <p>Produto mais vendidos no mês:</p>
+                <h1>{{ produto_mais_vendido }}</h1>
+            </div>
+        </div>
+        <div class="box_flex">
+            <div class="box_flex">
+                <div class="box_input">
+                    <a href="/cadastro-venda">Cadastrar venda</a>
+                    <a href="/cadastro-artesao">Cadastrar Artesão</a>
+                </div>
+                
+                <table class="list">
+                    <thead>
+                        <tr>
+                            <th>Artesão</th>
+                            <th>Valor de venda (mês)</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for venda in vendas_%}
+                        <tr>
+                            <td>{{ venda.artesao }}</td>
+                            <td><strong>R$ {{ venda.valor }}</strong></td>
+                        </tr>
+                        {% endfor %}
+    
+                    </tbody>
+                </table>
+            </div>
+            <div class="box_flex">
+                <div class="box_input">
+                    <a href="/cadastro-produto">Cadastrar produto</a>
+                    <a href="/cadastro-cliente">Cadastrar cliente</a>
+                </div>
+                <table class="list" id="tabelaProdutos">
+                    <thead>
+                        <tr>
+                            <th>Produto</th>
+                            <th>Estoque</th>
+                            <th>Valor em vendas</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for produto in tabela_produtos %}
+                        <tr>
+                            <td>{{ produto.nome }}</td>
+                            <td class="estoque">{{ produto.estoque }}</td>
+                            <td><strong>R$ {{ produto.valor }}</strong></td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+    </main>
+    <script>
+        window.onload = function () {
+            var tabela = document.getElementById("tabelaProdutos");
+            var celulasEstoque = tabela.getElementsByClassName("estoque");
+            for (var i = 0; i < celulasEstoque.length; i++) {
+                var estoque = Number(celulasEstoque[i].innerText);
+                if (estoque < 10) {
+                    celulasEstoque[i].style.backgroundColor = "#FF7F7F"; // vermelho claro
+                } else if (estoque >= 10 && estoque <= 20) {
+                    celulasEstoque[i].style.backgroundColor = "#FFFF7F"; // amarelo claro
+                } else {
+                    celulasEstoque[i].style.backgroundColor = "#7FFF7F"; // verde claro
+                }
+            }
+        };
+    </script>
+</body>
+
+</html>

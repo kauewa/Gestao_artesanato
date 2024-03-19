@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Work+Sans:wght@300;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='index.css') }}">
+    <link rel="stylesheet" type="text/css" href="../static/index.css">
+    <title>Mãos criativas artesanatos</title>
+</head>
+<body>
+    <header>
+        <a class="button" href="/home">Home</a>
+        <a class="button" href="/vendas">Vendas</a>
+        <a class="button" href="/estoque">Estoque</a>
+        <a class="button" href="/artesao">Artesãos</a>
+        <a class="button" href="/relatorio">Relatórios</a>
+    </header>
+    <h1>{{ produto.dados.Nome_produto}}</h1>
+    <div class="box_flex">
+        <p>Valor: <strong>R$ {{ produto.dados.preco }}</strong></p>
+        <p>Artesão: {{ produto.dados.Artesao.Nome }}</p>
+        <div class="box_input">
+            <p>Categoria: {{produto.dados.categoria.nome_categoria}}</p>
+            <p>Descricao: {{produto.dados.descricao}}</p>
+        </div>
+    </div>
+    <h1>Estoque: {{produto.dados.Estoque }}</h1>
+    <form method="post" action="{{request.path}}">
+        <div class="box_input">
+            <label>Adicionar estoque</label>
+            <input type="number" name="estoque"/>
+        </div>
+        <button type="submit" class="btn-small">Cadastrar estoque</button>
+    </form>
+   
+</body>
+</html>

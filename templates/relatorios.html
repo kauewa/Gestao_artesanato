@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Work+Sans:wght@300;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='index.css') }}">
+    <link rel="stylesheet" type="text/css" href="../static/index.css">
+    <title>Mãos criativas artesanatos</title>
+</head>
+
+<body>
+    <header>
+        <a class="button" href="/home">Home</a>
+        <a class="button" href="/vendas">Vendas</a>
+        <a class="button" href="/estoque">Estoque</a>
+        <a class="button" href="/artesao">Artesãos</a>
+        <a class="button" href="/relatorio">Relatórios</a>
+    </header>
+    {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+    {% for category, message in messages %}
+    <div class="alert alert-{{ category }}">
+        {{ message }}
+    </div>
+    {% endfor %}
+    {% endif %}
+    {% endwith %}
+    <div class="box_flex">
+        <form method="post" action="{{request.path}}">
+            <h1>Consulta</h1>
+            <select name="relatorio" id="relatorio" required>
+                <option value="1">Vendas</option>
+                <option value="2" selected>Estoque</option>
+            </select>
+            <div class="box_input" style="display: none;">
+                <label for="dataInicio">Data Início</label>
+                <input type="date" id="dataInicio" name="dataInicio">
+            </div>
+            <div class="box_input" style="display: none;">
+                <label for="dataFim">Data Fim</label>
+                <input type="date" id="dataFim" name="dataFim">
+            </div>
+            <button type="submit">Consultar</button>
+        </form>
+        <div id="results" class="results">
+            {% if excel_base64 %}
+            <a href="data:application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;base64,{{ excel_base64 }}"
+                download="dados.xlsx">Baixar Excel</a>
+            {% endif %}
+            {{ table | safe }}
+        </div>
+    </div>
+    <script>
+        window.onload = function () {
+            document.getElementById('relatorio').addEventListener('change', function () {
+                var dataInicio = document.getElementById('dataInicio').parentElement;
+                var dataFim = document.getElementById('dataFim').parentElement;
+                if (this.value == '1') {
+                    dataInicio.style.display = 'block';
+                    dataFim.style.display = 'block';
+                } else {
+                    dataInicio.style.display = 'none';
+                    dataFim.style.display = 'none';
+                }
+            });
+        }
+    </script>
+</body>
+
+</html>

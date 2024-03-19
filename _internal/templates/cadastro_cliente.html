@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Work+Sans:wght@300;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='index.css') }}">
+    <link rel="stylesheet" type="text/css" href="../static/index.css">
+    <title>Mãos criativas artesanatos</title>
+</head>
+
+<body>
+    <header>
+        <a class="button" href="/home">Home</a>
+        <a class="button" href="/vendas">Vendas</a>
+        <a class="button" href="/estoque">Estoque</a>
+        <a class="button" href="/artesao">Artesãos</a>
+        <a class="button" href="/relatorio">Relatórios</a>
+    </header>
+    <main>
+        <h1>Cadastrar Cliente</h1>
+        <form method="post" action="{{request.path}}">
+            <div class="box_flex">
+                <div class="box_input">
+                    <label>Nome</label>
+                    <input type="text" name="Nome" id="Nome" required />
+                </div>
+                <div class="box_input">
+                    <label>Data de nascimento</label>
+                    <input type="date" name="dt_nasc" required/>
+                </div>
+            </div>
+            <div class="box_flex">
+                <div class="box_input">
+                    <label>Email</label>
+                    <input type="email" name="email" required />
+                </div>
+                <div class="box_input">
+                    <label>Endereço</label>
+                    <input type="text" name="Endereco" id="Endereco" required />
+                </div>
+
+            </div>
+            <div class="box_flex">
+                <div class="box_input">
+                    <label>Telefone</label>
+                    <input type="text" name="Telefone" id="Telefone" required pattern="\d{10,11}" maxlength="11" />
+                </div>
+                <div class="box_input">
+                    <label>CPF</label>
+                    <input type="text" name="CPF" id="CPF" required pattern="\d{11}" maxlength="11"/>
+                </div>
+                
+            </div>
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                {% for category, message in messages %}
+                <div class="alert alert-{{ category }}">
+                    {{ message }}
+                </div>
+                {% endfor %}
+                {% endif %}
+                {% endwith %}
+            <button type="submit">Cadastrar</button>
+        </form>
+
+    </main>
+    
+</body>
+
+</html>

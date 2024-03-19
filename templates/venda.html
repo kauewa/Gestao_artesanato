@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Work+Sans:wght@300;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='index.css') }}">
+    <link rel="stylesheet" type="text/css" href="../static/index.css">
+    <title>Mãos criativas artesanatos</title>
+</head>
+<body>
+    <header>
+        <a class="button" href="/home">Home</a>
+        <a class="button" href="/vendas">Vendas</a>
+        <a class="button" href="/estoque">Estoque</a>
+        <a class="button" href="/artesao">Artesãos</a>
+        <a class="button" href="/relatorio">Relatórios</a>
+    </header>
+    <h1>VENDA</h1>
+    <h2 class="h2-link" onclick="window.location='/cliente/{{ venda.dado.Cliente }}';">Cliente: {{ venda.dado.nome_cliente }}</h2>
+    <p>{{ venda.dado.Data }}</p>
+    <div class="box_flex">
+        <p>Valor total: <strong>R$ {{ (venda.dado.Valor * venda.dado.parcelas) + venda.dado.primeira_parcela }}</strong></p>
+        <p>Forma de pagamento: {{venda.dado.Forma_pagamento}}</p>
+        {% if venda.dado.parcelas > 1 %}
+        <div class="box_input">
+            <p>Parcelas: {{venda.dado.parcelas}}</p>
+            <p>Entrada: {{venda.dado.primeira_parcela}}</p>
+            <p>Valor da parcela: {{ venda.dado.Valor }}</p>
+        </div>
+        {% endif %}
+    </div>
+    
+    <div class="box_flex">
+        
+        <table class="list" id="tabelaProdutos">
+            <thead>
+                <tr>
+                    <th>Produto</th>
+                    <th>Preço</th>
+                    <th>Quantidade</th>
+                    <th>Categoria</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for produto in venda.dado.Produtos %}
+                <tr class="clickable" onclick="window.location='/produto/{{ produto.ID }}';">
+                    <td>{{ produto.Nome_produto }}</td>
+                    <td><strong>R$ {{ produto.preco }}</strong></td>
+                    <td>{{ produto.quantidade }}</td>
+                    <td>{{ produto.categoria }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+</body>
+</html>
